@@ -1,5 +1,4 @@
-
-import javax.swing.JOptionPane;
+package libreriaPersona;
 
 /*
  * "
@@ -35,16 +34,20 @@ public class Persona {
     }
 
     public String getCurp() {
-
-        return "";
+        if (curp == null) {
+            throw new NullPointerException("La CURP no puede ser nulo");
+        }
+        return curp;
     }
 
     public void setCurp(String curp) {
         this.curp = curp;
-        validarCurp(curp);
     }
 
     public String getPaterno() {
+        if (paterno == null) {
+            throw new NullPointerException("El Apellido Paterno no puede ser nulo");
+        }
         return paterno;
     }
 
@@ -53,6 +56,9 @@ public class Persona {
     }
 
     public String getMaterno() {
+        if (materno == null) {
+            throw new NullPointerException("El Apellido materno no puede ser nulo");
+        }
         return materno;
     }
 
@@ -61,6 +67,9 @@ public class Persona {
     }
 
     public String getNombre() {
+        if (nombre == null) {
+            throw new NullPointerException("El nombre no puede ser nulo");
+        }
         return nombre;
     }
 
@@ -69,10 +78,18 @@ public class Persona {
     }
 
     public String getCelular() {
+        if (celular == null) {
+            throw new NullPointerException("El celular no puede ser nulo");
+        }
         return celular;
     }
 
     public void setCelular(String celular) {
+        try {
+            Long.parseLong(celular);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("El celular debe ser numérico");
+        }
         this.celular = celular;
     }
 
@@ -85,6 +102,9 @@ public class Persona {
     }
 
     public String getEstadoDeNacimiento() {
+        if (estadoDeNacimiento == null) {
+            throw new NullPointerException("El nombre no puede ser nulo");
+        }
         return estadoDeNacimiento;
     }
 
@@ -97,14 +117,17 @@ public class Persona {
     }
 
     public void setSexo(char sexo) {
+        if (sexo != 'H' && sexo != 'M') {
+            throw new IllegalArgumentException("Sexo debe ser 'H' o 'M'");
+        }
         this.sexo = sexo;
     }
 
-    public String validarCurp(String curp) {
+    public boolean validarCurp(String curp) {
         if (validarPaterno(curp) && validarMaternoNombre(curp) && validarFechaNac(curp) && validarSexo(curp) && validarEstado(curp) && validarConstantes(curp) && verificarHomonimia(curp) && verificarDigito(curp)) {
-            return "Curp valida";
+            return true;
         } else {
-            return "Curp NO valida";
+            return false;
         }
     }
 
@@ -159,7 +182,6 @@ public class Persona {
         if (curpValidar.equals(valor)) {
             return true;
         }
-
         return false;
     }
 
@@ -189,7 +211,6 @@ public class Persona {
         if (validarFinal.equals(curpValidar)) {
             return true;
         }
-
         return false;
     }
 
@@ -197,14 +218,16 @@ public class Persona {
     private boolean validarSexo(String curp) {
 
         String sexoChecar = String.valueOf(sexo);
-        String curpValidar = curp.substring(10, 11); //trae las posiciones 11 de la curp a validar
+        String curpValidar = curp.substring(10, 11); //trae la posición 11 de la curp a validar
 
-        if (("H".equals(sexoChecar) || "M".equals(sexoChecar)) && ("H".equals(curpValidar) || "M".equals(curpValidar))) {
+        if ("H".equals(sexoChecar) && "H".equals(curpValidar)) {
+            return true;
+        } else if ("M".equals(sexoChecar) && "M".equals(curpValidar)) {
             return true;
         }
         return false;
     }
-    
+
     //Método para validar la posiciones 12-13
     private boolean validarEstado(String curp) {
         String estado = "";
@@ -214,7 +237,7 @@ public class Persona {
         for (int i = 0; i < estadoDeNacimiento.length(); i++) {
             char ch = estadoDeNacimiento.charAt(i);
             if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
-                
+
             } else if (ch != ' ') {
                 estadoTemp = estadoTemp + ch;
             }
@@ -229,15 +252,16 @@ public class Persona {
         return false;
 
     }
+
     //Método para validar las posiciones 14-16
     private boolean validarConstantes(String curp) {
 
         String name = "";
         String ApellidoMaterno = "";
         String ApellidoPaterno = "";
-        
-        String curpValidar = curp.substring(13, 16); //trae las posiciones 12-13 de la curp a validar
-        
+
+        String curpValidar = curp.substring(13, 16); //trae las posiciones 14-16 de la curp a validar
+
         String nameTemp = "";
         String ApellidoMaternoTemp = "";
         String ApellidoPaternoTemp = "";
@@ -273,40 +297,40 @@ public class Persona {
         }
         ApellidoPaterno = (String.valueOf(ApellidoPaternoTemp.charAt(1))).toUpperCase();
         resulFinal = ApellidoPaterno + ApellidoMaterno + name;
-        
+
         if (resulFinal.equals(curpValidar)) {
             return true;
         }
-        
         return false;
 
     }
+
     //Métod para verificar el diferenciador de homonimia y siglo "Posición 17"
-    private boolean verificarHomonimia(String curp){
-        
-        String curpValidar = curp.substring(16, 17); //trae las posiciones 12-13 de la curp a validar
+    private boolean verificarHomonimia(String curp) {
+
+        String curpValidar = curp.substring(16, 17); //trae la posición 17 de la curp a validar
         int year = fechaNacimiento.getAnio();
-        
+
         if (year <= 1999) {
             if (curpValidar.matches("[0-9]+")) {
                 return true;
             }
-        }else if (year >= 2000) {
+        } else if (year >= 2000) {
             if (curpValidar.matches("[A-Z]*")) {
                 return true;
             }
         }
         return false;
     }
-    
+
     //Método para verificar dígito verificador
-    private boolean verificarDigito(String curp){
-        
-        String curpValidar = curp.substring(17, 18); //trae las posiciones 12-13 de la curp a validar
-        
+    private boolean verificarDigito(String curp) {
+
+        String curpValidar = curp.substring(17, 18); //trae la posición 18 de la curp a validar
+
         if (curpValidar.matches("[0-9]+")) {
-                return true;
-            }
+            return true;
+        }
         return false;
     }
 //Fin de métodos para validar la curp ------------------------------------------------
