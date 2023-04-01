@@ -176,8 +176,8 @@ public class Persona {
 
         char apellidoPrimeraLetra = materno.charAt(0);
         char nombrePrimeraLetra = nombre.charAt(0);
-        String curpValidar = curp.substring(2, 4); //trae las posiciones 3 y 4 de la curp a validar
-        String valor = String.valueOf(apellidoPrimeraLetra) + String.valueOf(nombrePrimeraLetra);
+        String curpValidar = (curp.substring(2, 4)).toUpperCase(); //trae las posiciones 3 y 4 de la curp a validar
+        String valor = (String.valueOf(apellidoPrimeraLetra) + String.valueOf(nombrePrimeraLetra)).toUpperCase();
 
         if (curpValidar.equals(valor)) {
             return true;
